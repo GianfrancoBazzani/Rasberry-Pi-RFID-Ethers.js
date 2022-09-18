@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/GianfrancoBazzani/RaspberryPi-RFID-Ethers.js#readme",
   "dependencies": {
+    "ethers": "^5.7.1",
     "mfrc522-rpi": "^2.1.3"
   }
 }
