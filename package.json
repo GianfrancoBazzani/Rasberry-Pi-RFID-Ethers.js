@@ -1,0 +1,22 @@
+{
+  "name": "raspberrypi-rfid-ethers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GianfrancoBazzani/RaspberryPi-RFID-Ethers.js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GianfrancoBazzani/RaspberryPi-RFID-Ethers.js/issues"
+  },
+  "homepage": "https://github.com/GianfrancoBazzani/RaspberryPi-RFID-Ethers.js#readme",
+  "dependencies": {
+    "mfrc522-rpi": "^2.1.3"
+  }
+}
