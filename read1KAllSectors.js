@@ -1,3 +1,4 @@
+import fs from "fs";
 import MFRC522 from "mfrc522-rpi";
 import SoftSPI from "rpi-softspi";
 
@@ -17,6 +18,7 @@ const softSPI = new SoftSPI({
 
 //mfrc522 Handler 
 const mfrc522 = new MFRC522(softSPI).setResetPin(22).setBuzzerPin(18);
+var fileAlreadyWrittenFlag = false;
 
 //main loop
 setInterval(function() {
@@ -57,18 +59,33 @@ setInterval(function() {
 	//Default key for authentication
   	const key = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
 
-	//# Authenticate on Block 8 with key and uid
-  	if (!mfrc522.authenticate(8, key, uid)) {
-    		console.log("Authentication Error");
-    		return;
-  	}
+	for(let i = 0; i < 64; i++){
+		//# Authenticate on Block i with key and uid
+  		if (!mfrc522.authenticate(i, key, uid)) {
+    			console.log("Authentication Error");
+    			return;
+  		}
 
-	 //# Dump Block 8
-  	console.log("Block: 8 Data: " + mfrc522.getDataForBlock(8));
+		//Read Sector:
+		let msg = "Block: " + i + " Data: " + mfrc522.getDataForBlock(i) + "\n";
 
+		console.log(msg);
+		if (!fileAlreadyWrittenFlag) {
+			fs.appendFile('./mem.txt', msg, err => {
+  				if (err) {
+    					console.error(err);
+  				}
+  			// file written successfully
+			});
+		}
+		if( i == 63){
+			fileAlreadyWrittenFlag = true;
+			console.log("File Aleady Written");
+		}
+	}
 	 //# Stop
  	 mfrc522.stopCrypto();
-	
+
 }, 500);
 
 

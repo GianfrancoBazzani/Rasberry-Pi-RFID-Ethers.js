@@ -43,32 +43,16 @@ setInterval(function() {
 
 	const uid = response.data;
 	console.log(
-		"Card read UID: %s %s %s %S",
-		uid[0].toString(16),
-		uid[1].toString(16),
-		uid[2].toString(16),
-		uid[3].toString(16)
-	);
+		"Card read UID: 0x " + uid[0].toString(16) + " " + uid[1].toString(16) + " "  + uid[2].toString(16) + " " + uid[0].toString(16)
+ 	);
 
 	//Scaned Card Selection
 	const memoryCapacity = mfrc522.selectCard(uid);
 	console.log("Card Memory Capacity:" + memoryCapacity);
 
-	//Default key for authentication
-  	const key = [0xff, 0xff, 0xff, 0xff, 0xff, 0xff];
-
-	//# Authenticate on Block 8 with key and uid
-  	if (!mfrc522.authenticate(8, key, uid)) {
-    		console.log("Authentication Error");
-    		return;
-  	}
-
-	 //# Dump Block 8
-  	console.log("Block: 8 Data: " + mfrc522.getDataForBlock(8));
-
 	 //# Stop
  	 mfrc522.stopCrypto();
 	
-}, 500);
+}, 1000);
 
 
