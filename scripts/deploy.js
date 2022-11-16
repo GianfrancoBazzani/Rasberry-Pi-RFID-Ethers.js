@@ -1,18 +1,26 @@
 async function main() {
-
-    const hardwareAddress = "0x69D7AE155A657EEC0CDB5D93FC7D2BFA2CBF6763"
-    const ownerAddress = "0xC9B9DEFB7A520E6B50A2F9AB71EB5DAB3CE7DC79"
+     
+    const hardwareAddress = "0xE15cDcFC1Ace34a561bFC5231DfA6FbF7390B589"
 
     const [deployer] = await ethers.getSigners();
   
     console.log("Deploying contracts with the account:", deployer.address);
   
     console.log("Account balance:", (await deployer.getBalance()).toString());
-  
-    const ControlAccess = await ethers.getContractFactory("ControlAccess");
-    const contract = await ControlAccess.deploy(hardwareAddress,ownerAddress);
-  
-    console.log("Contract address:", contract.address);
+
+
+    //AccessControlToken deployment
+    const AccessControlToken = await ethers.getContractFactory("AccessControlToken");
+    // constructor( string memory name_, string memory symbol_, uint256 amount_)
+    const AccessControlTokencontract = await AccessControlToken.deploy("Standard Acces Control Token", "SACT", ethers.utils.parseEther("1000"));
+
+    //AccessControl deployment
+    const AccessControl = await ethers.getContractFactory("AccessControl");
+    // Adapt deployment to new contract, constructor( address hardwareAddress_, address tokenAddress_, bool onchainTime_) 
+    const AccessControlcontract = await AccessControl.deploy(hardwareAddress,AccessControlTokencontract.address, true);
+
+    console.log("AccessControlTokencontract Contract address:", AccessControlTokencontract.address);
+    console.log("AccessControlcontract Contract address:", AccessControlcontract.address);
   }
   
   main()
