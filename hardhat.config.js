@@ -11,6 +11,13 @@ module.exports = {
     goerli: {
       url: `https://eth-goerli.alchemyapi.io/v2/${GOERLI_ALCHEMY_API_KEY}`,
       accounts: [PRIVATE_KEY]
+    },
+    PolygonzkEVMTestnet: {
+      url: `https://rpc.public.zkevm-test.net`,
+      accounts: [PRIVATE_KEY],
+      chainId: 1402
     }
   }
 };
+
+
