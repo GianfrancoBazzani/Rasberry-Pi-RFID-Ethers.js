@@ -6,7 +6,6 @@ import "./FareCalculator.sol";
 import "./AccessControlToken.sol";
 
 /* TO DO LIST;
-    - checkejar manualment occupancy
     - posar camps privat
     - getCurrentFare y getFare()
     - checkejar que la interface es d'un cert tipus
@@ -14,9 +13,9 @@ import "./AccessControlToken.sol";
     - posar camps privats privats
     - comentaris
 */
-
 contract AccessControl is Ownable {
     event UserBlocked(address indexed userAddress_, uint256 indexed debt);
+    event UserUnblocked(address indexed userAddress_);
     event NewFare(address indexed fareAddress_);
     event DebtPayed(address indexed userAdrdress_);
 
@@ -65,21 +64,13 @@ contract AccessControl is Ownable {
         _;
     }
 
-    modifier onlyIdInRange(address userAddress_) {
-        require(
-            msg.sender == userAddress_ || this.owner() == userAddress_,
-            "The address is not msg.sener or owner"
-        );
-        _;
-    }
-
     modifier onlyOnchainTime() {
         require(onchainTime == true, "The onchainTime value should be true");
         _;
     }
 
     modifier onlyOffchainTime() {
-        require(onchainTime == false, "The onchainTime value should be true");
+        require(onchainTime == false, "The onchainTime value should be false");
         _;
     }
 
@@ -151,6 +142,7 @@ contract AccessControl is Ownable {
         UserData storage tmpUser = user[userID[userAdrdress_] - 1];
         require(tmpUser.status == Status.BLOCKED, "The user is not blocked");
         tmpUser.status = Status.ACTIVATED;
+        emit UserUnblocked(userAdrdress_);
     }
 
     function addFare(address fareAddress_) public onlyOwner {
@@ -163,58 +155,76 @@ contract AccessControl is Ownable {
     /**
      * accesses registry
      */
-    function enter(address userAdress_)
+    function enter(address userAddress_)
         public
+        onlyRegistered(userAddress_)
         onlyOnchainTime
-        onlyOutside(userAdress_)
+        onlyOutside(userAddress_)
     {
-        _register(userAdress_, block.timestamp);
+        _register(userAddress_, block.timestamp);
     }
 
     function exit(address userAddress_)
         public
+        onlyRegistered(userAddress_)
         onlyOnchainTime
         onlyInside(userAddress_)
     {
         _register(userAddress_, block.timestamp);
     }
 
-    function register(address userAdress_) public onlyOnchainTime {
-        _register(userAdress_, block.timestamp);
+    function register(address userAddress_)
+        public
+        onlyRegistered(userAddress_)
+        onlyOnchainTime
+    {
+        _register(userAddress_, block.timestamp);
     }
 
-    function enter(address userAdress_, uint256 timestamp_)
+    function enter(address userAddress_, uint256 timestamp_)
         public
+        onlyRegistered(userAddress_)
         onlyOffchainTime
-        onlyOutside(userAdress_)
+        onlyOutside(userAddress_)
     {
-        _register(userAdress_, timestamp_);
+        _register(userAddress_, timestamp_);
     }
 
-    function exit(address userAdress_, uint256 timestamp_)
+    function exit(address userAddress_, uint256 timestamp_)
         public
+        onlyRegistered(userAddress_)
         onlyOffchainTime
-        onlyInside(userAdress_)
+        onlyInside(userAddress_)
     {
-        _register(userAdress_, timestamp_);
+        _register(userAddress_, timestamp_);
     }
 
-    function register(address userAdress_, uint256 timestamp_)
+    function register(address userAddress_, uint256 timestamp_)
         public
+        onlyRegistered(userAddress_)
         onlyOffchainTime
     {
-        _register(userAdress_, timestamp_);
+        _register(userAddress_, timestamp_);
     }
 
     /**
      * pay debt
      */
-    function payDebt() public onlyRegistered(msg.sender) {
+    function myDebt() public view onlyRegistered(msg.sender) returns (uint256) {
+        return user[userID[msg.sender] - 1].debt;
+    }
+
+    function payDebt(uint256 amount_) public onlyRegistered(msg.sender) {
         uint256 debt = user[userID[msg.sender] - 1].debt;
-        bool sent = token.transferFrom(msg.sender, address(this), debt);
-        require(sent, "Failed to pay debt");
-        user[userID[msg.sender] - 1].debt = 0;
-        emit DebtPayed(msg.sender);
+        if (debt < amount_) {
+            amount_ = debt;
+        }
+        if (amount_ > 0) {
+            bool sent = token.transferFrom(msg.sender, this.owner(), amount_);
+            require(sent, "Failed to pay debt");
+            user[userID[msg.sender] - 1].debt = debt - amount_;
+            emit DebtPayed(msg.sender);
+        }
     }
 
     /**
@@ -233,28 +243,24 @@ contract AccessControl is Ownable {
         public
         view
         onlyRegistered(userAddress_)
+        onlyOnchainTime
         returns (bool)
     {
-        return user[userID[msg.sender] - 1].isInside;
+        return user[userID[userAddress_] - 1].isInside;
     }
 
     function isInside(address userAddress_, uint256 timestamp_)
         public
         view
         onlyRegistered(userAddress_)
+        onlyOffchainTime
         returns (bool)
     {
         return _isInsideID(userID[userAddress_] - 1, timestamp_);
     }
 
     function occupancy() public view returns (uint256) {
-        uint256 nInside = 0;
-        for (uint256 i = 0; i < nUsers; ++i) {
-            if (_isInsideID(i, block.timestamp)) {
-                nInside += 1;
-            }
-        }
-        return nInside;
+        return occupancy(block.timestamp);
     }
 
     function occupancy(uint256 timestamp_) public view returns (uint256) {
@@ -386,7 +392,7 @@ contract AccessControl is Ownable {
             UserData storage tmpUser = user[userID[userAddress_] - 1];
             tmpUser.debt += cost;
             tmpUser.status = Status.BLOCKED;
-            uint256 allowance = token.allowance(msg.sender, address(this));
+            uint256 allowance = token.allowance(userAddress_, address(this));
             if (allowance < cost) {
                 emit UserBlocked(userAddress_, cost - allowance);
                 cost = allowance;
@@ -394,7 +400,7 @@ contract AccessControl is Ownable {
             if (cost > 0) {
                 bool sent = token.transferFrom(
                     userAddress_,
-                    address(this),
+                    this.owner(),
                     cost
                 );
                 require(sent, "Failed to pay on exit");
