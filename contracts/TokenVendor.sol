@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./AccessControlToken.sol";
 
-contract TokensVendor is Ownable {
+contract TokenVendor is Ownable {
     event TokensBought(
         address indexed buyer,
         uint256 amountOfETH,
