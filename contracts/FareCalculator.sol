@@ -17,7 +17,7 @@ contract Fare1 is FareCalculator {
         uint256, /*occupancy_*/
         address /*userAddress_*/
     ) public pure override returns (uint256) {
-        return 10 * (stop_ - start_);
+        return 2*(stop_ - start_);
     }
 }
 

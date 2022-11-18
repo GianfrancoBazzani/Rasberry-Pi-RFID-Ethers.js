@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/home/gianfranco/Documents/GitHub/RaspberryPi-RFID-Ethers.js/contracts/AccessControl.sol": {
-      "lastModificationDate": 1668773205848,
+      "lastModificationDate": 1668784343466,
       "contentHash": "740ccd006c3cc8abce606c332289324e",
       "sourceName": "contracts/AccessControl.sol",
       "solcConfig": {
@@ -41,8 +41,8 @@
       ]
     },
     "/home/gianfranco/Documents/GitHub/RaspberryPi-RFID-Ethers.js/contracts/FareCalculator.sol": {
-      "lastModificationDate": 1668773175546,
-      "contentHash": "7326e4c73bdf9d9605e76b70afaa3936",
+      "lastModificationDate": 1668784767980,
+      "contentHash": "8fe437951f0643c5aa03d5c6b2bd2a81",
       "sourceName": "contracts/FareCalculator.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -298,8 +298,8 @@
       ]
     },
     "/home/gianfranco/Documents/GitHub/RaspberryPi-RFID-Ethers.js/contracts/TokenVendor.sol": {
-      "lastModificationDate": 1668774765231,
-      "contentHash": "b80ca2ac1f4f892f6f92709d8c9f7620",
+      "lastModificationDate": 1668785376070,
+      "contentHash": "e7e3a24408ec30bd6c0894ea59696dce",
       "sourceName": "contracts/TokenVendor.sol",
       "solcConfig": {
         "version": "0.8.17",
@@ -326,14 +326,13 @@
       },
       "imports": [
         "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
         "./AccessControlToken.sol"
       ],
       "versionPragmas": [
         "^0.8.4"
       ],
       "artifacts": [
-        "TokensVendor"
+        "TokenVendor"
       ]
     }
   }
