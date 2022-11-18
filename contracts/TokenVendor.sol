@@ -16,9 +16,8 @@ contract TokensVendor is Ownable {
     ERC20 USDC;
     uint256 public price = 10000000000000000; //0.01 //USC/TOKEN
 
-    constructor(address _tokenAddress, address _usdcAddress, uint256 _initialPrice) {
-        //New Deploy Access Control Token
-        token = new AccessControlToken("Standard Access Control Token", "SACT", 100000000000000000000000000000000);
+    constructor(address _tokenAddress, uint256 _initialPrice) {
+        token = AccessControlToken(_tokenAddress);
         price = _initialPrice;
         USDC = ERC20(0x6c28AeF8977c9B773996d0e8376d2EE379446F2f);
     }
@@ -54,7 +53,7 @@ contract TokensVendor is Ownable {
     function withdraw() public onlyOwner {
 
         // Check usdc balance
-        uint256 usdcBalance = token.balanceOf(address(this));
+        uint256 usdcBalance = USDC.balanceOf(address(this));
         require(usdcBalance > 0);
 
         // withdraw all usdc
