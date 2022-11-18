@@ -14,17 +14,17 @@ contract TokensVendor is Ownable {
 
     AccessControlToken token;
     ERC20 USDC;
-    uint256 public constant price = 0.01; //USC/TOKEN
+    uint256 public price = 10000000000000000; //0.01 //USC/TOKEN
 
     constructor(address _tokenAddress, address _usdcAddress, uint256 _initialPrice) {
         //New Deploy Access Control Token
-        token = new AccessControlToken("Standard Access Control Token", "SACT", ethers.utils.parseEther("1000000"));
+        token = new AccessControlToken("Standard Access Control Token", "SACT", 100000000000000000000000000000000);
         price = _initialPrice;
-        USDC = ERC20("0x6c28AeF8977c9B773996d0e8376d2EE379446F2f");
+        USDC = ERC20(0x6c28AeF8977c9B773996d0e8376d2EE379446F2f);
     }
 
     function tokenACTAddress() public view returns (address) {
-        return token.address;
+        return address(token);
     }
 
     function updatePrice(uint256 _price) public onlyOwner {
@@ -42,7 +42,7 @@ contract TokensVendor is Ownable {
         require (USDC.allowance(msg.sender, address(this)) >= _usdcToPay , "Not enough USDC allowed to spend");
         
         // Transfer USDC from msg.sender to this.addess
-        require (USDC.transferFrom(msg.sender, address(this), _usdcToPay, "Error while transfering USDC"));
+        require (USDC.transferFrom(msg.sender, address(this), _usdcToPay), "Error while transfering USDC");
 
         //Transfer Tokens from Contract to user
         require(token.transfer(msg.sender, _amount), "Error while transfering Access Control Tokens");
@@ -58,7 +58,7 @@ contract TokensVendor is Ownable {
         require(usdcBalance > 0);
 
         // withdraw all usdc
-        require (USDC.transfer(msg.sender, usdcBalance, "Error while transfering USDC"));
+        require (USDC.transfer(msg.sender, usdcBalance), "Error while transfering USDC");
 
     }
 }
