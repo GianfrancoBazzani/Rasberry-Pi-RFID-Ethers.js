@@ -20,10 +20,10 @@ contract TokensVendor is Ownable {
         //New Deploy Access Control Token
         token = new AccessControlToken("Standard Access Control Token", "SACT", ethers.utils.parseEther("1000000"));
         price = _initialPrice;
-        USDC = ERC20("0x6c28AeF8977c9B773996d0e8376d2EE379446F2f")
+        USDC = ERC20("0x6c28AeF8977c9B773996d0e8376d2EE379446F2f");
     }
 
-    function tokenACTAddress() public view return address {
+    function tokenACTAddress() public view returns (address) {
         return token.address
     }
 
