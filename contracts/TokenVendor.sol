@@ -24,10 +24,10 @@ contract TokensVendor is Ownable {
     }
 
     function tokenACTAddress() public view returns (address) {
-        return token.address
+        return token.address;
     }
 
-    function updatePrice(uint256 _price) onlyOwner{
+    function updatePrice(uint256 _price) public onlyOwner {
         price = _price;
     }
 
@@ -45,7 +45,7 @@ contract TokensVendor is Ownable {
         require (USDC.transferFrom(msg.sender, address(this), _usdcToPay, "Error while transfering USDC"));
 
         //Transfer Tokens from Contract to user
-        require(token.transfer(msg.sender, _amount), "Error while transfering Access Control Tokens")
+        require(token.transfer(msg.sender, _amount), "Error while transfering Access Control Tokens");
 
         //Event emission
         emit TokensBought(msg.sender, _usdcToPay, _amount);
